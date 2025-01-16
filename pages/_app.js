@@ -3,7 +3,7 @@ import {
   CssBaseline,
   Container,
   Typography,
-  Grid,
+  Grid2,
   Button,
   TextField,
   MenuItem,
@@ -74,13 +74,13 @@ export default function App() {
         </Typography>
 
         {}
-        <Grid
+        <Grid2
           container
           spacing={2}
           alignItems="center"
           className="filter-container"
         >
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid2 item xs={12} sm={6} md={4}>
             <TextField
               select
               fullWidth
@@ -98,8 +98,8 @@ export default function App() {
                 Zürich Stampfenbachstrasse
               </MenuItem>
             </TextField>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          </Grid2>
+          <Grid2 item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="Startdatum"
@@ -112,8 +112,8 @@ export default function App() {
                 max: "2023-12-31",
               }}
             />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          </Grid2>
+          <Grid2 item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="Enddatum"
@@ -126,8 +126,8 @@ export default function App() {
                 max: "2023-12-31",
               }}
             />
-          </Grid>
-          <Grid item xs={12} sm={6} md={2}>
+          </Grid2>
+          <Grid2 item xs={12} sm={6} md={2}>
             <Button
               variant="contained"
               color="primary"
@@ -137,8 +137,8 @@ export default function App() {
             >
               Filter anwenden
             </Button>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         {}
         <Typography variant="h5" gutterBottom className="section-title">
