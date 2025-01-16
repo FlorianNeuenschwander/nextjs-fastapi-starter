@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
-
-let L;
-if (typeof window !== "undefined") {
-  L = require("leaflet");
-}
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -28,20 +23,6 @@ const CircleMarker = dynamic(
 );
 
 const Map = ({ data, location }) => {
-  const [customIcon, setCustomIcon] = useState(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && L) {
-      setCustomIcon(
-        L.icon({
-          iconUrl: "/marker-icon.png",
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-        })
-      );
-    }
-  }, []);
-
   const defaultPosition = [47.3769, 8.5417];
   const mapCenter = location || defaultPosition;
 
@@ -66,7 +47,7 @@ const Map = ({ data, location }) => {
           }
 
           return (
-            <Marker key={index} position={[lat, lng]} icon={customIcon}>
+            <Marker key={index} position={[lat, lng]}>
               <Popup>{Standortname || "Keine Informationen verfügbar"}</Popup>
             </Marker>
           );

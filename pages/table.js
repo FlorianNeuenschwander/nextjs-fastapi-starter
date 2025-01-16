@@ -8,15 +8,10 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
 } from "@mui/material";
 
 export default function renderTable(data) {
-  const tableContainer = document.getElementById("table-container");
-  if (!tableContainer) return;
-
-  // React-Komponenten-Rendering
-  const root = createRoot(tableContainer);
+  const root = createRoot(document.getElementById("table-container"));
 
   root.render(
     <TableContainer component={Paper}>
@@ -40,8 +35,12 @@ export default function renderTable(data) {
               <TableCell align="center">
                 {new Date(entry.Datum).toLocaleDateString()}
               </TableCell>
-              <TableCell align="center">{entry.T.toFixed(2)}</TableCell>
-              <TableCell align="center">{entry.RainDur.toFixed(2)}</TableCell>
+              <TableCell align="center">
+                {entry.T ? entry.T.toFixed(2) : "-"}
+              </TableCell>
+              <TableCell align="center">
+                {entry.RainDur ? entry.RainDur.toFixed(2) : "-"}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
