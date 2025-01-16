@@ -8,7 +8,6 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import renderTable from "./table.js";
 import dynamic from "next/dynamic";
 import Diagram from "./diagramm.js";
 import DataTable from "./datentabelle.js";
@@ -53,8 +52,6 @@ export default function App() {
       });
 
       setData(filteredData);
-
-      renderTable(filteredData);
     } catch (error) {
       console.error("Fehler beim Abrufen der Daten:", error);
       alert("Daten konnten nicht geladen werden.");
@@ -64,7 +61,7 @@ export default function App() {
   const selectedLocation = weatherStations[location];
   const mapCenter = selectedLocation
     ? [selectedLocation.lat, selectedLocation.lng]
-    : [47.3769, 8.5417]; // Standardposition Zürich
+    : [47.3769, 8.5417];
 
   return (
     <CssBaseline>
@@ -73,21 +70,19 @@ export default function App() {
           Wetterdaten Zürich 2023
         </Typography>
 
-        {/* Filter-Bereich */}
         <Grid
           container
           spacing={2}
           alignItems="center"
           className="filter-container"
         >
-          <Grid item xs={12} sm={8} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             <TextField
               select
               fullWidth
               label="Standort auswählen"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              style={{ minWidth: "300px" }}
             >
               <MenuItem value="Zch_Schimmelstrasse">
                 Zürich Schimmelstrasse
@@ -141,25 +136,21 @@ export default function App() {
           </Grid>
         </Grid>
 
-        {/* Gefilterte Wetterdaten */}
         <Typography variant="h5" gutterBottom className="section-title">
           Gefilterte Wetterdaten
         </Typography>
         <div id="table-container"></div>
 
-        {/* Karte */}
         <Typography variant="h5" gutterBottom className="section-title">
           Karte
         </Typography>
-        <Map data={data} selectedStation={location} />
+        <Map data={data} location={mapCenter} center={mapCenter} />
 
-        {/* Diagramm */}
         <Typography variant="h5" gutterBottom className="section-title">
           Diagramm
         </Typography>
         <Diagram data={data} />
 
-        {/* Statistiken */}
         <Typography variant="h5" gutterBottom className="section-title">
           Statistiken
         </Typography>

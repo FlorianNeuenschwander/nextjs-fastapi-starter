@@ -8,70 +8,64 @@ import {
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-if (typeof window === "undefined") {
-  console.error("Leaflet kann im SSR nicht geladen werden.");
-}
-
+// Custom-Komponente zum Setzen des Kartenmittelpunkts
 function SetMapCenter({ center }) {
   const map = useMap();
+
   useEffect(() => {
     if (center) {
       map.setView(center, 13);
     }
   }, [center, map]);
+
   return null;
 }
 
-export default function Map({ data, selectedStation }) {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  const stationCoordinates = {
-    Zch_Schimmelstrasse: [47.3769, 8.5417],
-    Zch_Rosengartenstrasse: [47.3856, 8.5337],
-    Zch_Stampfenbachstrasse: [47.3793, 8.548],
-  };
-
-  const center = stationCoordinates[selectedStation] || [47.3769, 8.5417];
+// Hauptkomponente Map
+export default function Map({ data, location }) {
+  const customIcon = L.icon({
+    iconUrl: "/marker-icon.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
 
   return (
     <MapContainer
-      center={center}
+      center={location || [47.3769, 8.5417]}
       zoom={13}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "400px", width: "100%" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
       />
 
-      <SetMapCenter center={center} />
+      <SetMapCenter center={location} />
 
       {data?.map((entry, index) => {
         const { WGS84_lat: lat, WGS84_lng: lng, Standortname } = entry;
+
         if (!lat || !lng) {
           console.error(`Ungültige Koordinaten für Eintrag ${index}:`, entry);
           return null;
         }
 
         return (
-          <Marker key={index} position={[lat, lng]}>
+          <Marker key={index} position={[lat, lng]} icon={customIcon}>
             <Popup>{Standortname || "Keine Informationen verfügbar"}</Popup>
           </Marker>
         );
       })}
 
-      {selectedStation && (
-        <CircleMarker
-          center={center}
-          radius={10}
-          pathOptions={{ color: "blue", fillColor: "blue", fillOpacity: 1 }}
-        >
-          <Popup>{selectedStation}</Popup>
-        </CircleMarker>
-      )}
+      <CircleMarker
+        center={location || [47.3769, 8.5417]}
+        radius={10}
+        pathOptions={{ color: "blue", fillColor: "blue", fillOpacity: 1 }}
+      >
+        <Popup>Wetterstation</Popup>
+      </CircleMarker>
     </MapContainer>
   );
 }
