@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
-import { useMap } from "react-leaflet";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -23,16 +22,6 @@ const CircleMarker = dynamic(
   { ssr: false }
 );
 
-function SetMapCenter({ center }) {
-  const map = useMap();
-
-  useEffect(() => {
-    map.setView(center, 13);
-  }, [center, map]);
-
-  return null;
-}
-
 const Map = ({ data, location }) => {
   const defaultPosition = [47.3769, 8.5417];
   const mapCenter = location || defaultPosition;
@@ -48,7 +37,6 @@ const Map = ({ data, location }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
-        <SetMapCenter center={mapCenter} />
 
         {data?.map((entry, index) => {
           const { WGS84_lat: lat, WGS84_lng: lng, Standortname } = entry;
