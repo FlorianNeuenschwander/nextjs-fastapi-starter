@@ -1,71 +1,87 @@
-import React, { useEffect } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  CircleMarker,
-  useMap,
-} from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
-// Custom-Komponente zum Setzen des Kartenmittelpunkts
-function SetMapCenter({ center }) {
-  const map = useMap();
+let L;
+if (typeof window !== "undefined") {
+  L = require("leaflet");
+}
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
+const CircleMarker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.CircleMarker),
+  { ssr: false }
+);
+
+const Map = ({ data, location }) => {
+  const [customIcon, setCustomIcon] = useState(null);
 
   useEffect(() => {
-    if (center) {
-      map.setView(center, 13);
+    if (typeof window !== "undefined" && L) {
+      setCustomIcon(
+        L.icon({
+          iconUrl: "/marker-icon.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+        })
+      );
     }
-  }, [center, map]);
+  }, []);
 
-  return null;
-}
-
-// Hauptkomponente Map
-export default function Map({ data, location }) {
-  const customIcon = L.icon({
-    iconUrl: "/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-  });
+  const defaultPosition = [47.3769, 8.5417];
+  const mapCenter = location || defaultPosition;
 
   return (
-    <MapContainer
-      center={location || [47.3769, 8.5417]}
-      zoom={13}
-      style={{ height: "400px", width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-      />
-
-      <SetMapCenter center={location} />
-
-      {data?.map((entry, index) => {
-        const { WGS84_lat: lat, WGS84_lng: lng, Standortname } = entry;
-
-        if (!lat || !lng) {
-          console.error(`Ungültige Koordinaten für Eintrag ${index}:`, entry);
-          return null;
-        }
-
-        return (
-          <Marker key={index} position={[lat, lng]} icon={customIcon}>
-            <Popup>{Standortname || "Keine Informationen verfügbar"}</Popup>
-          </Marker>
-        );
-      })}
-
-      <CircleMarker
-        center={location || [47.3769, 8.5417]}
-        radius={10}
-        pathOptions={{ color: "blue", fillColor: "blue", fillOpacity: 1 }}
+    <div style={{ height: "400px", width: "100%" }}>
+      <MapContainer
+        center={mapCenter}
+        zoom={13}
+        style={{ height: "100%", width: "100%" }}
       >
-        <Popup>Wetterstation</Popup>
-      </CircleMarker>
-    </MapContainer>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+
+        {data?.map((entry, index) => {
+          const { WGS84_lat: lat, WGS84_lng: lng, Standortname } = entry;
+
+          if (!lat || !lng) {
+            console.error(`Ungültige Koordinaten für Eintrag ${index}:`, entry);
+            return null;
+          }
+
+          return (
+            <Marker key={index} position={[lat, lng]} icon={customIcon}>
+              <Popup>{Standortname || "Keine Informationen verfügbar"}</Popup>
+            </Marker>
+          );
+        })}
+
+        <CircleMarker
+          center={mapCenter}
+          radius={10}
+          pathOptions={{ color: "blue", fillColor: "blue", fillOpacity: 1 }}
+        >
+          <Popup>Wetterstation</Popup>
+        </CircleMarker>
+      </MapContainer>
+    </div>
   );
-}
+};
+
+export default Map;
