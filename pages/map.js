@@ -1,44 +1,32 @@
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import React, { useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  CircleMarker,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-let L;
-if (typeof window !== "undefined") {
-  L = require("leaflet");
+if (typeof window === "undefined") {
+  console.error("Leaflet kann im SSR nicht geladen werden.");
 }
 
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
-  ssr: false,
-});
-
-const Map = ({ data, selectedStation }) => {
-  const [isClient, setIsClient] = useState(false);
-  const [customIcon, setCustomIcon] = useState(null);
-
+function SetMapCenter({ center }) {
+  const map = useMap();
   useEffect(() => {
-    if (typeof window !== "undefined" && L) {
-      setCustomIcon(
-        L.icon({
-          iconUrl: "/marker-icon.png",
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-        })
-      );
+    if (center) {
+      map.setView(center, 13);
     }
-    setIsClient(true);
-  }, []);
+  }, [center, map]);
+  return null;
+}
+
+export default function Map({ data, selectedStation }) {
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   const stationCoordinates = {
     Zch_Schimmelstrasse: [47.3769, 8.5417],
@@ -46,63 +34,44 @@ const Map = ({ data, selectedStation }) => {
     Zch_Stampfenbachstrasse: [47.3793, 8.548],
   };
 
-  const defaultPosition = [47.3769, 8.5417];
-  const centerPosition =
-    selectedStation && stationCoordinates[selectedStation]
-      ? stationCoordinates[selectedStation]
-      : defaultPosition;
+  const center = stationCoordinates[selectedStation] || [47.3769, 8.5417];
 
   return (
-    <div className="map-container" style={{ width: "50%", height: "400px" }}>
-      {isClient && (
-        <MapContainer
-          center={centerPosition}
-          zoom={12}
-          style={{
-            width: "100%",
-            height: "100%",
-            borderRadius: "8px",
-            border: "1px solid #ddd",
-          }}
+    <MapContainer
+      center={center}
+      zoom={13}
+      style={{ height: "100%", width: "100%" }}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
+      />
+
+      <SetMapCenter center={center} />
+
+      {data?.map((entry, index) => {
+        const { WGS84_lat: lat, WGS84_lng: lng, Standortname } = entry;
+        if (!lat || !lng) {
+          console.error(`Ungültige Koordinaten für Eintrag ${index}:`, entry);
+          return null;
+        }
+
+        return (
+          <Marker key={index} position={[lat, lng]}>
+            <Popup>{Standortname || "Keine Informationen verfügbar"}</Popup>
+          </Marker>
+        );
+      })}
+
+      {selectedStation && (
+        <CircleMarker
+          center={center}
+          radius={10}
+          pathOptions={{ color: "blue", fillColor: "blue", fillOpacity: 1 }}
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
-          />
-          {data?.map((row, index) => {
-            const {
-              WGS84_lat: lat,
-              WGS84_lng: lng,
-              Standortname,
-              T,
-              Datum,
-            } = row;
-            if (!lat || !lng) {
-              console.error(`Ungültige Koordinaten für Eintrag ${index}:`, row);
-              return null;
-            }
-
-            return (
-              <Marker
-                key={`${lat}-${lng}-${index}`}
-                position={[lat, lng]}
-                icon={customIcon}
-              >
-                <Popup>
-                  <b>Standort:</b>{" "}
-                  {Standortname || "Keine Informationen verfügbar"}
-                  <br />
-                  <b>Temperatur:</b> {T} °C
-                  <br />
-                  <b>Datum:</b> {new Date(Datum).toLocaleDateString()}
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MapContainer>
+          <Popup>{selectedStation}</Popup>
+        </CircleMarker>
       )}
-    </div>
+    </MapContainer>
   );
-};
-
-export default Map;
+}

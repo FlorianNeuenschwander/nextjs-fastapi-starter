@@ -26,7 +26,6 @@ export default function Diagram({ data }) {
     return <p>Keine Daten für das Diagramm verfügbar.</p>;
   }
 
-  // Daten für das Diagramm vorbereiten
   const labels = data.map((entry) =>
     new Date(entry.Datum).toLocaleDateString("de-DE")
   );
@@ -42,14 +41,14 @@ export default function Diagram({ data }) {
         data: temperatureData,
         borderColor: "red",
         backgroundColor: "red",
-        yAxisID: "y2", // Rechte Y-Achse
+        yAxisID: "y2",
       },
       {
         label: "Niederschlagsdauer (min)",
         data: precipitationData,
         borderColor: "blue",
         backgroundColor: "blue",
-        yAxisID: "y1", // Linke Y-Achse
+        yAxisID: "y1",
       },
     ],
   };

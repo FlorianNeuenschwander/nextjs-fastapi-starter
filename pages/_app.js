@@ -3,7 +3,7 @@ import {
   CssBaseline,
   Container,
   Typography,
-  Grid2,
+  Grid,
   Button,
   TextField,
   MenuItem,
@@ -64,7 +64,7 @@ export default function App() {
   const selectedLocation = weatherStations[location];
   const mapCenter = selectedLocation
     ? [selectedLocation.lat, selectedLocation.lng]
-    : [47.3769, 8.5417];
+    : [47.3769, 8.5417]; // Standardposition Zürich
 
   return (
     <CssBaseline>
@@ -73,20 +73,21 @@ export default function App() {
           Wetterdaten Zürich 2023
         </Typography>
 
-        {}
-        <Grid2
+        {/* Filter-Bereich */}
+        <Grid
           container
           spacing={2}
           alignItems="center"
           className="filter-container"
         >
-          <Grid2 item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={8} md={6}>
             <TextField
               select
               fullWidth
               label="Standort auswählen"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              style={{ minWidth: "300px" }}
             >
               <MenuItem value="Zch_Schimmelstrasse">
                 Zürich Schimmelstrasse
@@ -98,8 +99,8 @@ export default function App() {
                 Zürich Stampfenbachstrasse
               </MenuItem>
             </TextField>
-          </Grid2>
-          <Grid2 item xs={12} sm={6} md={3}>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="Startdatum"
@@ -112,8 +113,8 @@ export default function App() {
                 max: "2023-12-31",
               }}
             />
-          </Grid2>
-          <Grid2 item xs={12} sm={6} md={3}>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               label="Enddatum"
@@ -126,8 +127,8 @@ export default function App() {
                 max: "2023-12-31",
               }}
             />
-          </Grid2>
-          <Grid2 item xs={12} sm={6} md={2}>
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
             <Button
               variant="contained"
               color="primary"
@@ -137,28 +138,28 @@ export default function App() {
             >
               Filter anwenden
             </Button>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
 
-        {}
+        {/* Gefilterte Wetterdaten */}
         <Typography variant="h5" gutterBottom className="section-title">
           Gefilterte Wetterdaten
         </Typography>
         <div id="table-container"></div>
 
-        {}
+        {/* Karte */}
         <Typography variant="h5" gutterBottom className="section-title">
           Karte
         </Typography>
-        <Map data={data} location={mapCenter} center={mapCenter} />
+        <Map data={data} selectedStation={location} />
 
-        {}
+        {/* Diagramm */}
         <Typography variant="h5" gutterBottom className="section-title">
           Diagramm
         </Typography>
         <Diagram data={data} />
 
-        {}
+        {/* Statistiken */}
         <Typography variant="h5" gutterBottom className="section-title">
           Statistiken
         </Typography>
