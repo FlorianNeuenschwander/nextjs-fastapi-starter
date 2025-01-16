@@ -11,7 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import Diagram from "./diagramm.js";
 import DataTable from "./datentabelle.js";
-import renderTable from "./table.js"; // Import der Tabelle
+import renderTable from "./table.js";
 import "../styles/style.css";
 
 const Map = dynamic(() => import("./map"), { ssr: false });
@@ -53,7 +53,7 @@ export default function App() {
       });
 
       setData(filteredData);
-      renderTable(filteredData); // Tabelle rendern
+      renderTable(filteredData);
     } catch (error) {
       console.error("Fehler beim Abrufen der Daten:", error);
       alert("Daten konnten nicht geladen werden.");

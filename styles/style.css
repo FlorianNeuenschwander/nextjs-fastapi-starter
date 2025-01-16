@@ -1,17 +1,11 @@
-.map-container {
-  width: 100%; /* Die Karte soll die volle Breite des Containers einnehmen */
-  height: 400px; /* Feste Höhe für die Karte */
-  position: relative;
-  z-index: 0;
-  border-radius: 8px; /* Abgerundete Ecken */
-  border: 1px solid #ddd; /* Rahmen für die Karte */
-  margin-bottom: 20px; /* Optional: Abstand nach unten */
+.app-container {
+  padding: 20px;
 }
 
 .app-title {
+  font-size: 24px;
+  margin-bottom: 20px;
   text-align: center;
-  font-weight: bold;
-  font-size: 2.5rem; /* Größerer Titel */
 }
 
 .filter-container {
@@ -19,10 +13,15 @@
 }
 
 .filter-button {
-  height: 56px; /* Gleiche Höhe wie Textfelder */
+  height: 56px;
 }
 
 .section-title {
+  font-size: 20px;
   margin-top: 30px;
-  font-size: 1.5rem; /* Optional: Schriftgröße anpassen */
+  margin-bottom: 10px;
+}
+
+.table-container {
+  margin-top: 20px;
 }
